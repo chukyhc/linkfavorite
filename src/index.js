@@ -44,8 +44,15 @@ app.use((req,resp,next)=>{
 
 // router
 app.use(require("./routes/index.router"));
+app.use(require("./routes/authentication.router"));
+app.use("/links",require("./routes/link.router"));
+
+
+
 
 //archivos publicos
+app.use(expres.static(path.join(__dirname,"public")));
+
 
 
 
