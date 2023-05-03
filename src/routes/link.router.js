@@ -44,6 +44,7 @@ router.post("/edit/:id",async(req,resp)=>{
     const {id}=req.params;
     const {title,url,descripcion}=req.body;
 
+
     sql=`UPDATE link SET title = '${title}', url = '${url}', descripcion = '${descripcion}' WHERE id =${id}` 
     console.log(sql);
     result =await pool.query(sql);
