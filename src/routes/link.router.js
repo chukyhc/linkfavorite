@@ -13,6 +13,7 @@ router.post("/add",async (req,resp)=>{
     const newlink ={title,url,descripcion};
     
     await pool.query("INSERT INTO link(title,url,descripcion) values($1,$2,$3)",[title,url,descripcion]);
+    req.flash("success", "Enlace Guardado sastifastoriamente");
     resp.redirect("/links");
     
 });
@@ -27,6 +28,7 @@ router.get("/",async(req,resp)=>{
 router.get("/delete/:id",async (req,resp)=>{
     const id = req.params.id;
     await pool.query("DELETE FROM link where id= "+id);
+    req.flash("success","enlace eliminado sastifactoriamente");
     resp.redirect("/links");
 
 });

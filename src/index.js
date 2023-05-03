@@ -6,6 +6,10 @@ const  morgan = require("morgan");
 const router = require("./routes/index.router");
 const path = require("path");
 const exp = require("constants");
+const flash = require("connect-flash");
+// configurando la session
+const pgsStore=require("connect-pg-simple")(session);
+const pooldb = require("./database");
 
 
 //inicializaciones
@@ -28,18 +32,38 @@ app.engine(".hbs",exphbs.engine({
 
 
 
-//middleware
+//middleware.
+// configuracion de una session con un pool cd postgres
+app.use(session({
+    secret: 'apppgnodesession',
+    resave:false,
+    saveUninitialized:false,
+    store:new pgsStore({
+       pool:pooldb,
+       tableName:'users_sessions',
+       createTableIfMissing:true
+    })
+}));
+
+
+app.use(flash());
+
 app.use(morgan("dev"));
 app.use(expres.urlencoded({extended:false}));
 app.use(expres.json());
 
 app.use((req,resp,next)=>{
 
+    resp.locals.success = req.flash("success");
+    
     next();
 })
 
 
+
+
 // variables globales 
+
 
 
 // router
