@@ -15,3 +15,5 @@ pooldb.connect((err, client, release) => {
   return console.log("Cliente Db esta conectado");
   
 })
+
+module.exports = pooldb;

@@ -45,7 +45,7 @@ app.use((req,resp,next)=>{
 // router
 app.use(require("./routes/index.router"));
 app.use(require("./routes/authentication.router"));
-app.use("/link",require("./routes/link.router"));
+app.use("/links",require("./routes/link.router"));
 
 
 
