@@ -11,10 +11,13 @@ const flash = require("connect-flash");
 const pgsStore=require("connect-pg-simple")(session);
 const pooldb = require("./database");
 
+const passport = require("passport");
+
 
 //inicializaciones
 const app = expres();
 dotenv.config();
+require("./lib/passport");
 
 
 // configuraciones 
@@ -51,10 +54,14 @@ app.use(flash());
 app.use(morgan("dev"));
 app.use(expres.urlencoded({extended:false}));
 app.use(expres.json());
+// inicializando el metodo massport
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use((req,resp,next)=>{
 
     resp.locals.success = req.flash("success");
+    resp.locals.message = req.flash("message");
     
     next();
 })
