@@ -6,11 +6,18 @@ const  morgan = require("morgan");
 const router = require("./routes/index.router");
 const path = require("path");
 const exp = require("constants");
+const flash = require("connect-flash");
+// configurando la session
+const pgsStore=require("connect-pg-simple")(session);
+const pooldb = require("./database");
+
+const passport = require("passport");
 
 
 //inicializaciones
 const app = expres();
 dotenv.config();
+require("./lib/passport");
 
 
 // configuraciones 
@@ -28,18 +35,42 @@ app.engine(".hbs",exphbs.engine({
 
 
 
-//middleware
+//middleware.
+// configuracion de una session con un pool cd postgres
+app.use(session({
+    secret: 'apppgnodesession',
+    resave:false,
+    saveUninitialized:false,
+    store:new pgsStore({
+       pool:pooldb,
+       tableName:'users_sessions',
+       createTableIfMissing:true
+    })
+}));
+
+
+app.use(flash());
+
 app.use(morgan("dev"));
 app.use(expres.urlencoded({extended:false}));
 app.use(expres.json());
+// inicializando el metodo massport
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use((req,resp,next)=>{
 
+    resp.locals.success = req.flash("success");
+    resp.locals.message = req.flash("message");
+    
     next();
 })
 
 
+
+
 // variables globales 
+
 
 
 // router

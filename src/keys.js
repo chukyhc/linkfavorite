@@ -8,6 +8,12 @@ module.exports={
         idleTimeoutMillis: 30000,
         connectionTimeoutMillis: 2000,
 
+    },
+    databasepg:{
+        serverName:"localhost",
+        databaseName:"link",
+        user:"postgres",
+        password:"398104"
     }
 
 }
