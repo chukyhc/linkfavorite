@@ -62,6 +62,8 @@ app.use((req,resp,next)=>{
 
     resp.locals.success = req.flash("success");
     resp.locals.message = req.flash("message");
+    resp.locals.user = req.user || null;
+    
     
     next();
 })

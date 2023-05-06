@@ -18,12 +18,13 @@ passport.use('local.signin',new Strategy({
             if(result.rowCount>0)
             {   
                const user=result.rows[0];      
-               console.log("usuario: " ,user);         
+                    
                 const validPassword = await helpers.matchPassword(password,user.password);
                 console.log("validacio: " ,validPassword);
                 if(validPassword)
                 {
-                    done(null,user.id,req.flash("successs","Bienvenido "+ user.username));
+                    
+                    done(null,user,req.flash("successs","Bienvenido "+ user.username));
                 }
                 else
                 {
@@ -61,8 +62,14 @@ passport.use('local.signup',new Strategy({
             password= await helpers.ecryptPasseord(password);            
             const newUser=[username,password, req.body.fullname];
             const result =  await pool.query("INSERT INTO users(username,password,fullname) values($1,$2,$3) RETURNING id ",newUser);
-            const userid= result.rows[0].id;
-            done(null,userid);
+            const id= result.rows[0].id;
+            user={
+                id,
+                username,
+                passport,
+                fullname
+            }
+            done(null,user);
 
         }
         catch(e)
@@ -75,14 +82,16 @@ passport.use('local.signup',new Strategy({
   ));
 
 
-  passport.serializeUser((id_user,done)=>{
-        done(null,id_user);
+  passport.serializeUser((user,done)=>{
+    console.log(" desserializar");
+        done(null,user);
 
   });
 
-  passport.deserializeUser(async (id_user,done)=>{
-    const rows = (await pool.query("SELECT * FROM users WHERE id = $1",[id_user])).rows;
-    //*console.log(rows);
+  passport.deserializeUser(async (user,done)=>{
+    console.log(" desserializar", user);
+    const rows = (await pool.query("SELECT * FROM users WHERE id = $1",[user.id])).rows;
+    
     done(rows.error,rows[0]);
 
 
