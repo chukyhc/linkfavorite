@@ -3,7 +3,7 @@ const Strategy = require("passport-local").Strategy;
 const pool = require("../database");
 const helpers = require("../lib/helpers");
 const { route } = require("../routes/link.router");
-const { log } = require("console");
+const contollerUser=require("../controller/users.controller");
 
 
 passport.use('local.signin',new Strategy({
@@ -12,39 +12,16 @@ passport.use('local.signin',new Strategy({
     passReqToCallback:true
   },
   async (req,username,password,done)=>{
-        try
+        
+    const {user,error} = await contollerUser.userLoggin(username,password);
+       if(user){
+            done(null,user,req.flash("successs","Bienvenido "+ user.username));
+        }
+       else
         {
-            const result =  await pool.query("SELECT * FROM users WHERE username=$1 ",[username]);
-            if(result.rowCount>0)
-            {   
-               const user=result.rows[0];      
-                    
-                const validPassword = await helpers.matchPassword(password,user.password);
-                console.log("validacio: " ,validPassword);
-                if(validPassword)
-                {
-                    
-                    done(null,user,req.flash("successs","Bienvenido "+ user.username));
-                }
-                else
-                {
-                    done(null,false,req.flash("message","Password Inconrrecto"));
-                }
-                
-            }
-            else{
-               
-                done(null,false,req.flash("message","Usuario no existe"));
-            }
+           done(null,false,req.flash("message",error));
+        }
             
-
-        }
-        catch(e)
-        {
-            console.error(e);
-        }
-
-       
   }
   ));
 
@@ -58,23 +35,19 @@ passport.use('local.signup',new Strategy({
   async (req,username,password,done)=>{
         
         try
-        {
-            password= await helpers.ecryptPasseord(password);            
-            const newUser=[username,password, req.body.fullname];
-            const result =  await pool.query("INSERT INTO users(username,password,fullname) values($1,$2,$3) RETURNING id ",newUser);
-            const id= result.rows[0].id;
-            user={
-                id,
-                username,
-                passport,
-                fullname
-            }
-            done(null,user);
+        { 
+            const user = await contollerUser.userAdd(username,password,req.body.fullname)        
+            if(user)
+            {
+               return  done(null,user);
+             }
+            
 
         }
         catch(e)
-        {
+        {           
             console.error(e);
+            return  done(null,null);
         }
 
        
@@ -83,17 +56,17 @@ passport.use('local.signup',new Strategy({
 
 
   passport.serializeUser((user,done)=>{
-    console.log(" desserializar");
+
         done(null,user);
 
   });
 
   passport.deserializeUser(async (user,done)=>{
-    console.log(" desserializar", user);
-    const rows = (await pool.query("SELECT * FROM users WHERE id = $1",[user.id])).rows;
     
-    done(rows.error,rows[0]);
-
+    
+    const valUser = await contollerUser.getUserId(user.id);
+    console.log("verificacion1 " , valUser);
+    done(null,valUser);
 
   });
 
