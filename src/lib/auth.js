@@ -12,6 +12,7 @@ module.exports={
     {
         if(!(req.isAuthenticated()))
         {
+            console.log("");
             return next();
         }
         return resp.redirect("/profile");

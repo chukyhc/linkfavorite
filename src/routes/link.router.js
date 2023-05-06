@@ -14,14 +14,15 @@ router.post("/add",async (req,resp)=>{
     const {title,url,descripcion}=req.body;
     const newlink ={title,url,descripcion};
     
-    await pool.query("INSERT INTO link(title,url,descripcion) values($1,$2,$3)",[title,url,descripcion]);
+    await pool.query("INSERT INTO link(title,url,descripcion,user_id) values($1,$2,$3,$4)",[title,url,descripcion,req.user.id]);
     req.flash("success", "Enlace Guardado sastifastoriamente");
     resp.redirect("/links");
     
 });
 router.get("/",async(req,resp)=>{
-
-    const links = (await pool.query("SELECT * FROM link")).rows;
+    id=req.user.id;
+    console.log("usuario ",id);
+    const links = (await pool.query("SELECT * FROM link WHERE user_id=$1",[id])).rows;
     resp.render("links/list",{links});
     
 
