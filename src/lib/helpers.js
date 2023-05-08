@@ -3,7 +3,7 @@ const bcrypt =require("bcryptjs");
 
 const helpers ={};
 
-helpers.ecryptPasseord = async function(password)
+helpers.encryptPasseord = async function(password)
 {
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);

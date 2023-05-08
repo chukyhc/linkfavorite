@@ -1,7 +1,7 @@
 const express = require("express");
 const router  = express.Router();
-const pool = require("../database");
 const {isLoggedIn} = require("../lib/auth");
+const controllerLink =require("../controller/link.controller");
 router.use(isLoggedIn);
 
 router.get("/add",(req,resp)=>{
@@ -10,50 +10,29 @@ router.get("/add",(req,resp)=>{
 
 });
 
-router.post("/add",async (req,resp)=>{
-    const {title,url,descripcion}=req.body;
-    const newlink ={title,url,descripcion};
+router.post("/add",(req,resp)=>{
     
-    await pool.query("INSERT INTO link(title,url,descripcion) values($1,$2,$3)",[title,url,descripcion]);
-    req.flash("success", "Enlace Guardado sastifastoriamente");
-    resp.redirect("/links");
-    
+    controllerLink.addlink(req,resp);
 });
-router.get("/",async(req,resp)=>{
 
-    const links = (await pool.query("SELECT * FROM link")).rows;
-    resp.render("links/list",{links});
-    
-
+router.get("/",(req,resp)=>{
+       
+    controllerLink.getlinks(req,resp);
 })
 
-router.get("/delete/:id",async (req,resp)=>{
-    const id = req.params.id;
-    await pool.query("DELETE FROM link where id= "+id);
-    req.flash("success","enlace eliminado sastifactoriamente");
-    resp.redirect("/links");
-
+router.get("/delete/:id", (req,resp)=>{
+   
+    controllerLink.deletelink(req,resp);
 });
 
-router.get("/edit/:id",async(req,resp)=>{
-    const {id}=req.params;
-    const link = (await pool.query("SELECT * FROM link WHERE id = $1",[id])).rows;
-    console.log(link)
-    resp.render("links/edit", {link:link[0]});
+router.get("/edit/:id",(req,resp)=>{
+    controllerLink.geteditlink(req,resp);
 
 });
 
 
 router.post("/edit/:id",async(req,resp)=>{
-    const {id}=req.params;
-    const {title,url,descripcion}=req.body;
-
-
-    sql=`UPDATE link SET title = '${title}', url = '${url}', descripcion = '${descripcion}' WHERE id =${id}` 
-    console.log(sql);
-    result =await pool.query(sql);
-    console.log(result);
-    resp.redirect("/links");
+    controllerLink.editlink(req,resp);
 });
 
 module.exports    = router;

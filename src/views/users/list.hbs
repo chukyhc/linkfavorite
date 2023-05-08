@@ -1,0 +1,38 @@
+<div class="container p-4">
+    <div class="card col-md-9 mx-auto border border-2">
+    
+    <div class="row mx-left bg-info bg-gradient">
+        <div class="col-1 mx-left border">
+            id
+        </div>
+        <div class="col-sm mx-left border">
+            Nombre completo
+        </div>
+        <div class="col-sm mx-left border">
+            Usuario
+        </div>
+        <div class="col-sm mx-left border">
+            accion
+        </div>
+    </div>
+    {{#each users }}
+    <div class="row mx-left">
+        <div class="col-1 mx-left border">
+            {{id}}
+        </div>
+        <div class="col-sm mx-left border">
+            {{fullname}}
+        </div>
+        <div class="col-sm mx-left border">
+            {{username}}
+        </div>
+        <div class="col-sm mx-auto border">            
+            <button type="button" class="btn btn-warning">Suspender</button>
+            <button type="button" class="btn btn-danger">Eliminar</button>            
+        </div>
+    </div>
+    {{else }}
+        no existe usuario
+    {{/each}}
+    </div>
+</div>
