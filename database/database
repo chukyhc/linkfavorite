@@ -20,3 +20,14 @@ fulname  VARCHAR(100) NOT NULL
     created_at  timestamp NOT NULL DEFAULT now(),    
     CONSTRAINT fk_link_users FOREIGN KEY (user_id) REFERENCES users (id)
     );
+
+    CREATE TABLE IF NOT EXISTS public.session_log
+(
+	id SERIAL PRIMARY KEY,
+	id_user INTEGER NOT NULL,
+	ip character varying(25),
+	fecha timestamp NOT NULL  DEFAULT 'now()',
+	agente text,
+	CONSTRAINT fk_session_log_users FOREIGN KEY (id_user) REFERENCES users(id)
+	
+)

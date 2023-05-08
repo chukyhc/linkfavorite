@@ -1,6 +1,7 @@
 const express = require("express");
 const passport = require("passport");
- const {isLoggedIn,isNoLoggedIn} = require("../lib/auth");
+const {isLoggedIn,isNoLoggedIn} = require("../lib/auth");
+const contollerUser=require("../controller/users.controller")
 
 
 const router  = express.Router();
@@ -40,13 +41,9 @@ router.post("/signin",isNoLoggedIn,(req,resp,next)=>{
 });
 
 router.get("/logout",isLoggedIn,(req,resp)=>{
-
-    req.logOut(err=>{
-        if(err)
-        {
-            req.flash("message","Error al cerra la session de usuario");
-            resp.redirect("/");
-        }
+    const user = req.user;
+    req.logOut(async ()=>{
+        await contollerUser.session_logClose(user.id_ses);
     });
     
 resp.redirect("/signin");
